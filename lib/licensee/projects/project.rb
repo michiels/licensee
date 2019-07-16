@@ -24,8 +24,12 @@ module Licensee
       def license
         return @license if defined? @license
 
+        known_licenses = licenses_without_copyright.select { |l| l.key != "other" }
+
         @license = if licenses_without_copyright.count == 1 || lgpl?
           licenses_without_copyright.first
+        elsif known_licenses.count >= 1
+          known_licenses.first
         elsif licenses_without_copyright.count > 1
           Licensee::License.find('other')
         end
